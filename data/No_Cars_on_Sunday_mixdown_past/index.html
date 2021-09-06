@@ -28,11 +28,12 @@
 	<!-- DESCRIPTION -->
 	<div class="graph-data">
         <span id="graph-data-description">
-        	Viewing  "<em>The past sound</em> data (<a href='../datasets/mixture.json'>No_Cars_on_Sunday_mixdown.json</a>)"
-        	<p>The graph is a set of:</p>
-        	<p style="padding-left:5em">Nodes (e.g., 130Hz) correspond peak responses in Hertz ;</p>
-	        <p style="padding-left:5em">Edges (i.e., links) between nodes correspond to the succession of peaks in time.</p>
-        	</pre>
+            <p style="font-size:70%;">Viewing  "<em>The first 500 frequency bins from the sound</em> data (<a href='../datasets/No_Cars_on_Sunday_mixdown.json'>No_Cars_on_Sunday_mixdown_past.json</a>)"</p>
+        	<p style="font-size:70%;">The graph is a set of:</p>
+        	<p style="font-size:70%;padding-left:5em">Nodes (e.g., 130Hz) correspond peak responses in Hertz ;</p>
+	        <p style="font-size:70%;padding-left:5em">Edges (i.e., links) between nodes correspond to the succession of peaks in time.</p>
+        	<p style="font-size:70%;">Copyright: <a href='https://ieeexplore.ieee.org/abstract/document/8903055'>Spectral Visibility Graphs: Application to Similarity of Harmonic Signals.</a></p>
+            </pre>
         </span>
     </div>
 
@@ -62,7 +63,7 @@
 
 	    const Graph = ForceGraph3D()
 	      (document.getElementById('3d-graph1'))
-	        .jsonUrl('../datasets/mixture.json')
+	        .jsonUrl('../datasets/No_Cars_on_Sunday_mixdown.json')
 	        .nodeAutoColorBy('group')
 	        .cameraPosition({ z: distance })
 	        .numDimensions(numDim)

@@ -1,0 +1,125 @@
+<head>
+  <link rel="stylesheet" href="style.css">
+    <style>
+    body {
+      font-family: Sans-serif;
+      margin: 0;
+    }
+    .graph-data { position :relative ; display : grid ; grid-template-columns : 1fr 1fr ;}
+    #graph-data-description { position :absolute ; color:white ; width: 100%; height: 100% ; z-index: 10 ;}
+    #3d-graph { position :relative ; width: 50%; float:left;}
+    /*.grid-container {
+	    display: grid;
+	    grid-template-columns: 1fr 1fr;
+	    grid-gap: 20px;
+	}*/
+  </style>
+
+  <script src="//unpkg.com/three"></script>
+  <script src="//unpkg.com/three-spritetext"></script>
+
+   <script src="//unpkg.com/dat.gui"></script>
+  <script src="//unpkg.com/3d-force-graph"></script>
+  <!--<script src="../../dist/3d-force-graph.js"></script>-->
+</head>
+
+<body>
+
+	<!-- DESCRIPTION -->
+	<div class="graph-data">
+        <span id="graph-data-description">
+            <p style="font-size:70%;">Viewing  "<em>The first 500 frequency bins from the sound</em> data (<a href='../datasets/PowerPlant_mixdown.json'>PowerPlant_mixdown.json</a>)"</p>
+        	<p style="font-size:70%;">The graph is a set of:</p>
+        	<p style="font-size:70%;padding-left:5em">Nodes (e.g., 130Hz) correspond peak responses in Hertz ;</p>
+	        <p style="font-size:70%;padding-left:5em">Edges (i.e., links) between nodes correspond to the succession of peaks in time.</p>
+        	<p style="font-size:70%;">Copyright: <a href='https://ieeexplore.ieee.org/abstract/document/8903055'>Spectral Visibility Graphs: Application to Similarity of Harmonic Signals.</a></p>
+            </pre>
+        </span>
+    </div>
+
+
+    <!-- GRAPH -->
+    <div id="3d-graph1"></div>
+
+     <!-- AUDIO -->
+    <audio controls autoplay style="background-color: black; position: absolute; bottom: 0%;">
+			<source src="../datasets/PowerPlant_mixdown.wav" type="audio/wav">
+		</audio>
+
+	<!-- SCRIPT -->
+	<script>
+
+	    const distance = 1400;
+	    let numDim = 3;
+
+	    // controls
+	    const controls = { 'Dimensions': 3};
+	    var toggleDimensions = function(numDimensions) {
+		      numDim = numDimensions;
+		      Graph.numDimensions(numDim);
+		};
+	    const gui = new dat.GUI();
+	    gui.add(controls, 'Dimensions', [1, 2, 3]).onChange(toggleDimensions);
+
+	    const Graph = ForceGraph3D()
+	      (document.getElementById('3d-graph1'))
+	        .jsonUrl('../datasets/PowerPlant_mixdown.json')
+	        .nodeAutoColorBy('group')
+	        .cameraPosition({ z: distance })
+	        .numDimensions(numDim)
+	        .onNodeClick(
+	            node => {
+	                // Aim at node from outside it
+	                if(Graph.numDimensions() == 3){
+	                    Graph.cameraPosition(
+	                        //{ x: node.x - 66, y: node.y - 66, z: node.z - 66 }, // new position
+	                        { x: Graph.cameraPosition().x /2, y: Graph.cameraPosition().y /2, z: Graph.cameraPosition().z /2}, // new position
+	                        node, // lookAt ({ x, y, z })
+	                        2000  // ms transition duration
+	                    )
+	                } else if(Graph.numDimensions() == 2){
+	                    Graph.cameraPosition(
+	                        node, //new position
+	                        node, // lookAt ({ x, y, z })
+	                        1000  // ms transition duration
+	                    )
+	                }
+	            }
+	        )
+	        .nodeThreeObject(node => {
+	          // use a sphere as a drag handle
+	          const obj = new THREE.Mesh(
+	            new THREE.SphereGeometry(10),
+	            new THREE.MeshBasicMaterial({ depthWrite: false, transparent: true, opacity: 0 })
+	          );
+
+	          // add text sprite as child
+	          const sprite = new SpriteText(node.description);
+	          sprite.color = node.color;
+	          sprite.textHeight = 8;
+	          obj.add(sprite);
+
+	          return obj;
+	        });
+
+	    // Spread nodes a little wider
+	    Graph.d3Force('charge').strength(-120);
+
+
+	    // // camera orbit
+	    // let angle = 10;
+	    // setInterval(() => {
+	    //   Graph.cameraPosition({
+	    //     x: distance * Math.sin(angle),
+	    //     z: distance * Math.cos(angle)
+	    //   });
+	    //   angle += Math.PI / 300;
+	    // }, 40);
+
+	  </script>
+
+	  
+
+	  <!-- <img src="../datasets/sound-original.png" alt="Spectpgram of the past sound"> -->
+
+</body>
